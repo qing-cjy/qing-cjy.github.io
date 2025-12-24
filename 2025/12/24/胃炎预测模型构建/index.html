@@ -1,0 +1,322 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>GERD分类项目复盘：数据预处理是模型性能的核心驱动力 | 字节间的独白</title><meta name="author" content="Cyan"><meta name="copyright" content="Cyan"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="分享GERD三分类项目中，通过系统化数据预处理将模型准确率从0.4提升到0.9+的完整过程和经验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GERD分类项目复盘：数据预处理是模型性能的核心驱动力">
+<meta property="og:url" content="http://example.com/2025/12/24/%E8%83%83%E7%82%8E%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA/index.html">
+<meta property="og:site_name" content="字节间的独白">
+<meta property="og:description" content="分享GERD三分类项目中，通过系统化数据预处理将模型准确率从0.4提升到0.9+的完整过程和经验">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pixabay.com/zh/illustrations/ai-generated-catgirl-anime-girl-8961268/">
+<meta property="article:published_time" content="2025-12-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-12-24T14:07:15.399Z">
+<meta property="article:author" content="Cyan">
+<meta property="article:tag" content="\[机器学习, 数据预处理, 医学数据分析, Hexo]">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pixabay.com/zh/illustrations/ai-generated-catgirl-anime-girl-8961268/"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "GERD分类项目复盘：数据预处理是模型性能的核心驱动力",
+  "url": "http://example.com/2025/12/24/%E8%83%83%E7%82%8E%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA/",
+  "image": "https://pixabay.com/zh/illustrations/ai-generated-catgirl-anime-girl-8961268/",
+  "datePublished": "2025-12-23T16:00:00.000Z",
+  "dateModified": "2025-12-24T14:07:15.399Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cyan",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2025/12/24/%E8%83%83%E7%82%8E%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.2"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'GERD分类项目复盘：数据预处理是模型性能的核心驱动力',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-dracula.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://pixabay.com/zh/illustrations/ai-generated-catgirl-anime-girl-8961268/);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">字节间的独白</span></a><a class="nav-page-title" href="/"><span class="site-name">GERD分类项目复盘：数据预处理是模型性能的核心驱动力</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">GERD分类项目复盘：数据预处理是模型性能的核心驱动力</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-23T16:00:00.000Z" title="发表于 2025-12-24 00:00:00">2025-12-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-24T14:07:15.399Z" title="更新于 2025-12-24 22:07:15">2025-12-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%A1%B9%E7%9B%AE%E5%A4%8D%E7%9B%98-%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6/">\[项目复盘, 数据科学]</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>GGERD分类项目复盘：数据预处理是模型性能的核心驱动力</p>
+<p>在GERD（胃食管反流病）三分类机器学习项目中，我经历了从模型准确率0.4-0.6的低谷，到最终提升至0.81-0.94的突破。核心结论非常明确：90%的性能提升来自数据预处理，仅10%来自算法选择与调参。这篇复盘将分享项目中遇到的核心问题、系统化预处理方案及关键经验。</p>
+<p>一、项目背景与核心问题</p>
+<p>### 项目目标</p>
+<p>基于311个样本、57个临床特征（含基本信息、体征、化验指标等），实现GERD三个亚型的分类，辅助临床诊断。</p>
+<p>### 初始困境</p>
+<p>采用常规数据清洗（基础缺失值填补、标准化）后，测试决策树、KNN、随机森林、XGBoost等8种常用模型，准确率均徘徊在0.4-0.6之间，远未达到临床应用要求。后续尝试解决类别不平衡（合并少数类为二分类）、降维（PCA）、超参数调优等常规方案，均未取得实质性突破。</p>
+<p>### 核心问题定位</p>
+<p>所有模型表现不佳的根源并非算法，而是数据质量问题——特征类型混杂未区分、缺失值处理粗糙、异常值未合理处理、缺乏有临床意义的特征工程。</p>
+<p>二、系统化数据预处理方案</p>
+<p>针对数据质量问题，我构建了可复现的预处理流水线，封装为GERDDataPreprocessor类，核心功能包括完整日志记录、自动化特征识别、持久化保存、一键运行。以下是核心处理步骤及代码片段：</p>
+<p>1. 自动化特征识别与差异化处理</p>
+<p>医学数据特征类型复杂，需先精准区分数值特征、分类特征、高基数分类特征，再针对性处理：</p>
+<p>- 数值特征：根据分布特性处理缺失值（偏态分布用中位数，对称分布用均值），偏态特征用Box-Cox或分位数变换矫正</p>
+<p>- 分类特征：基于医学关键词（舌、脉、苔、sex、smoke等）识别，用众数填补缺失值</p>
+<p>- 高基数分类特征：采用目标编码避免维度爆炸，失败时回退标签编码</p>
+<p>#### 核心代码（特征识别与缺失值处理）</p>
+<p>class GERDDataPreprocessor:</p>
+<p>&nbsp;   def __init__(self, random_state&#x3D;42):</p>
+<p>&nbsp;       self.random_state &#x3D; random_state</p>
+<p>&nbsp;       self.scaler &#x3D; StandardScaler()</p>
+<p>&nbsp;       self.label_encoders &#x3D; {}</p>
+<p>&nbsp;       self.onehot_encoders &#x3D; {}</p>
+<p>&nbsp;       self.preprocessing_log &#x3D; []  # 日志记录</p>
+<p>&nbsp;   </p>
+<p>&nbsp;   def advanced_preprocessing(self, df):</p>
+<p>&nbsp;       # 1. 自动化特征识别</p>
+<p>&nbsp;       categorical_keywords &#x3D; [‘舌’, ‘脉’, ‘苔’, ‘sex’, ‘smoke’, ‘drink’]</p>
+<p>&nbsp;       self.numerical_features &#x3D; df.select_dtypes(include&#x3D;[‘int64’, ‘float64’]).columns.tolist()</p>
+<p>&nbsp;       self.categorical_features &#x3D; [col for col in df.columns if any(kw in col for kw in categorical_keywords)]</p>
+<p>&nbsp;       self.high_cardinality_features &#x3D; [col for col in self.categorical_features if df[col].nunique() &gt; 50]</p>
+<p>&nbsp;       </p>
+<p>&nbsp;       # 2. 差异化缺失值处理</p>
+<p>&nbsp;       # 数值特征</p>
+<p>&nbsp;       for col in self.numerical_features:</p>
+<p>&nbsp;           if df[col].isnull().any():</p>
+<p>&nbsp;               fill_val &#x3D; df[col].median() if df[col].skew() &gt; 1 else df[col].mean()</p>
+<p>&nbsp;               df[col].fillna(fill_val, inplace&#x3D;True)</p>
+<p>&nbsp;               self.preprocessing_log.append(f”{col}：用{fill_val:.2f}填补缺失值”)</p>
+<p>&nbsp;       # 分类特征</p>
+<p>&nbsp;       for col in self.categorical_features + self.high_cardinality_features:</p>
+<p>&nbsp;           if df[col].isnull().any():</p>
+<p>&nbsp;               mode_val &#x3D; df[col].mode()[0] if not df[col].mode().empty else ‘Unknown’</p>
+<p>&nbsp;               df[col].fillna(mode_val, inplace&#x3D;True)</p>
+<p>&nbsp;               self.preprocessing_log.append(f”{col}：用{mode_val}填补缺失值”)</p>
+<p>&nbsp;       # 后续省略编码、变换等步骤</p>
+<p>&nbsp;       return X, y</p>
+<p>2. 异常值处理：保留临床意义的缩尾策略</p>
+<p>医学数据中的异常值可能是患者真实病理状态，不可直接删除。采用IQR方法检测异常值后，通过缩尾处理限制数值范围，既避免异常值干扰模型，又保留临床信息：</p>
+<p>#### 核心代码（异常值处理）</p>
+<p>def handle_outliers(self, df):</p>
+<p>&nbsp;   outlier_info &#x3D; []</p>
+<p>&nbsp;   for col in self.numerical_features:</p>
+<p>&nbsp;       Q1 &#x3D; df[col].quantile(0.25)</p>
+<p>&nbsp;       Q3 &#x3D; df[col].quantile(0.75)</p>
+<p>&nbsp;       IQR &#x3D; Q3 - Q1</p>
+<p>&nbsp;       lower_bound &#x3D; Q1 - 1.5 * IQR</p>
+<p>&nbsp;       upper_bound &#x3D; Q3 + 1.5 * IQR</p>
+<p>&nbsp;       outliers &#x3D; ((df[col] &lt; lower_bound) | (df[col] &gt; upper_bound)).sum()</p>
+<p>&nbsp;       if outliers &gt; 0:</p>
+<p>&nbsp;           df[col] &#x3D; np.clip(df[col], lower_bound, upper_bound)</p>
+<p>&nbsp;           outlier_info.append(f”{col}：{outliers}个异常值缩尾处理”)</p>
+<p>&nbsp;   self.preprocessing_log.extend(outlier_info)</p>
+<p>&nbsp;   return df</p>
+<p>3. 医学领域特征工程：提升特征解释性与预测力</p>
+<p>结合医学原理构建复合特征，比纯数据挖掘特征更具临床意义，是性能提升的关键：</p>
+<p>#### 核心代码（医学特征工程）</p>
+<p>def medical_feature_engineering(self, df):</p>
+<p>&nbsp;   # BMI（体重指数，关联GERD与肥胖关系）</p>
+<p>&nbsp;   if ‘weight’ in df.columns and ‘height’ in df.columns:</p>
+<p>&nbsp;       df[‘bmi’] &#x3D; df[‘weight’] &#x2F; ((df[‘height’] &#x2F; 100) ** 2)</p>
+<p>&nbsp;   # 血脂比值（代谢指标，关联炎症反应）</p>
+<p>&nbsp;   if ‘total_cholesterol’ in df.columns and ‘high_density_lipoprotein_cholesterol’ in df.columns:</p>
+<p>&nbsp;       df[‘cholesterol_ratio’] &#x3D; df[‘total_cholesterol’] &#x2F; (df[‘high_density_lipoprotein_cholesterol’] + 1e-10)</p>
+<p>&nbsp;   # 肝功能比值（ALT&#x2F;AST，判断肝脏受累情况）</p>
+<p>&nbsp;   if ‘alanine_aminotransferase’ in df.columns and ‘aspartate_aminotransferase’ in df.columns:</p>
+<p>&nbsp;       df[‘alt_ast_ratio’] &#x3D; df[‘alanine_aminotransferase’] &#x2F; (df[‘aspartate_aminotransferase’] + 1e-10)</p>
+<p>&nbsp;   self.preprocessing_log.append(“完成医学复合特征构建：bmi、cholesterol_ratio、alt_ast_ratio”)</p>
+<p>&nbsp;   return df</p>
+<p>4. 类别不平衡处理：SMOTE+Tomek Links组合策略</p>
+<p>拒绝简化问题（不合并三分类为二分类），采用SMOTE+Tomek Links组合方法：先通过SMOTE智能合成少数类样本，再通过Tomek Links清理类别边界模糊样本，避免过拟合的同时平衡类别分布：</p>
+<p>#### 核心代码（不平衡处理）</p>
+<p>def handle_imbalance_advanced(self, X, y):</p>
+<p>&nbsp;   self.preprocessing_log.append(f”原始类别分布：{dict(Counter(y))}”)</p>
+<p>&nbsp;   # SMOTE+Tomek Links组合处理</p>
+<p>&nbsp;   smote_tomek &#x3D; SMOTETomek(</p>
+<p>&nbsp;       smote&#x3D;SMOTE(sampling_strategy&#x3D;’auto’, random_state&#x3D;self.random_state, k_neighbors&#x3D;3),</p>
+<p>&nbsp;       tomek&#x3D;TomekLinks(sampling_strategy&#x3D;’auto’),</p>
+<p>&nbsp;       random_state&#x3D;self.random_state</p>
+<p>&nbsp;   )</p>
+<p>&nbsp;   X_resampled, y_resampled &#x3D; smote_tomek.fit_resample(X, y)</p>
+<p>&nbsp;   self.preprocessing_log.append(f”重采样后类别分布：{dict(Counter(y_resampled))}”)</p>
+<p>&nbsp;   return X_resampled, y_resampled</p>
+<p>5. 持久化与一键运行：保证可复现性</p>
+<p>类中集成模型保存、数据导出、日志生成功能，支持一键运行完整流程，满足医学研究的可复现性与可审计性要求：</p>
+<p>#### 核心代码（持久化与一键运行）</p>
+<p>def save_preprocessed_data(self, X, y, output_dir):</p>
+<p>&nbsp;   # 保存特征和标签</p>
+<p>&nbsp;   os.makedirs(output_dir, exist_ok&#x3D;True)</p>
+<p>&nbsp;   X.to_csv(os.path.join(output_dir, “features.csv”), index&#x3D;False)</p>
+<p>&nbsp;   pd.DataFrame({‘type’: y}).to_csv(os.path.join(output_dir, “labels.csv”), index&#x3D;False)</p>
+<p>&nbsp;   # 保存编码器和标准化器</p>
+<p>&nbsp;   joblib.dump(self.scaler, os.path.join(output_dir, “scaler.pkl”))</p>
+<p>&nbsp;   with open(os.path.join(output_dir, “label_encoders.pkl”), ‘wb’) as f:</p>
+<p>&nbsp;       pickle.dump(self.label_encoders, f)</p>
+<p>&nbsp;   # 保存预处理日志</p>
+<p>&nbsp;   with open(os.path.join(output_dir, “preprocessing_report.txt”), ‘w’) as f:</p>
+<p>&nbsp;       f.write(“\n”.join(self.preprocessing_log))</p>
+<p>&nbsp;   </p>
+<p>&nbsp;   def run_complete_preprocessing(self, data_path, output_dir, balance_data&#x3D;True):</p>
+<p>&nbsp;       df &#x3D; pd.read_csv(data_path)</p>
+<p>&nbsp;       X, y &#x3D; self.advanced_preprocessing(df)</p>
+<p>&nbsp;       if balance_data:</p>
+<p>&nbsp;           X, y &#x3D; self.handle_imbalance_advanced(X, y)</p>
+<p>&nbsp;       self.save_preprocessed_data(X, y, output_dir)</p>
+<p>&nbsp;       return X, y</p>
+<p>三、预处理效果验证</p>
+<p>经过系统化预处理后，所有模型性能均大幅提升，核心模型表现如下：</p>
+<p>模型</p>
+<p>预处理前准确率</p>
+<p>预处理后准确率</p>
+<p>AUC-Weighted</p>
+<p>XGBoost</p>
+<p>~0.55</p>
+<p>0.9439</p>
+<p>0.9929</p>
+<p>随机森林</p>
+<p>~0.55</p>
+<p>0.9439</p>
+<p>0.9916</p>
+<p>逻辑回归</p>
+<p>~0.50</p>
+<p>0.9065</p>
+<p>0.9837</p>
+<p>SVM</p>
+<p>~0.50</p>
+<p>0.9159</p>
+<p>0.9899</p>
+<p>### 关键发现</p>
+<p>- 简单的逻辑回归模型准确率提升至0.9065，说明预处理后的数据已接近线性可分，数据质量的提升是核心驱动力；</p>
+<p>- 树模型（XGBoost、随机森林）因能捕捉特征间复杂交互，表现最优，更适配多因素影响的医学数据场景。</p>
+<p>四、核心经验总结</p>
+<p>1. 数据优先于算法</p>
+<p>当所有模型都表现不佳时，应首先检查数据质量而非盲目追求复杂算法。本项目90%的性能提升来自预处理，印证了“垃圾进，垃圾出”的核心原则。</p>
+<p>2. 领域知识是关键</p>
+<p>基于医学原理构建的BMI、血脂比值等特征，比纯粹数据挖掘的特征更具解释性和预测力。数据科学家必须与领域专家深度协作，让特征具备业务&#x2F;临床意义。</p>
+<p>3. 系统化胜过临时方案</p>
+<p>构建可复现的预处理流水线（如GERDDataPreprocessor类），比临时清洗脚本更具长期价值，尤其适配医学研究对可复现性和可审计性的严格要求。</p>
+<p>4. 不要过早简化问题</p>
+<p>初期尝试将三分类转为二分类虽能小幅提升指标，但掩盖了GERD不同亚型的临床意义（不同亚型治疗方案差异显著）。坚持解决原始问题，才能让模型具备实际应用价值。</p>
+<p>五、实用建议（面向医学数据科学同行）</p>
+<p>1. 数据深度诊断先行：建模前先检查数据分布、缺失模式、异常值、特征相关性，定位核心问题。</p>
+<p>2. 构建系统化预处理流程：封装为可复用类，保留完整日志，保证可复现性。</p>
+<p>3. 深度融合领域知识：与临床专家协作，创建有医学意义的特征，提升模型解释性与预测力。</p>
+<p>4. 全面评估模型：不止关注准确率，还需分析混淆矩阵、AUC、召回率等指标（医学场景中，漏诊比误诊更严重）。</p>
+<p>5. 坚持问题本质：不为短期提升指标而简化实际需求，确保模型贴合真实临床应用场景。</p>
+<p>六、项目价值</p>
+<p>本项目通过系统化数据预处理，使GERD分类模型具备了实际临床应用价值，同时验证了“高质量数据是有效模型基础”的核心原则。这套预处理方法论可迁移至糖尿病分型、肿瘤预后预测等其他医学数据分析任务，为同类项目提供可复用的解决方案。</p>
+<hr>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Cyan</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/12/24/%E8%83%83%E7%82%8E%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA/">http://example.com/2025/12/24/%E8%83%83%E7%82%8E%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">字节间的独白</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86-%E5%8C%BB%E5%AD%A6%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-Hexo/">\[机器学习, 数据预处理, 医学数据分析, Hexo]</a></div><div class="post-share"><div class="social-share" data-image="https://pixabay.com/zh/illustrations/ai-generated-catgirl-anime-girl-8961268/" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/11/28/hello-world/" title="Hello World"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Hello World</div></div><div class="info-2"><div class="info-item-1">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cyan</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/24/%E8%83%83%E7%82%8E%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA/" title="GERD分类项目复盘：数据预处理是模型性能的核心驱动力"><img src="https://pixabay.com/zh/illustrations/ai-generated-catgirl-anime-girl-8961268/" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GERD分类项目复盘：数据预处理是模型性能的核心驱动力"/></a><div class="content"><a class="title" href="/2025/12/24/%E8%83%83%E7%82%8E%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA/" title="GERD分类项目复盘：数据预处理是模型性能的核心驱动力">GERD分类项目复盘：数据预处理是模型性能的核心驱动力</a><time datetime="2025-12-23T16:00:00.000Z" title="发表于 2025-12-24 00:00:00">2025-12-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/28/hello-world/" title="Hello World">Hello World</a><time datetime="2025-11-27T16:01:56.439Z" title="发表于 2025-11-28 00:01:56">2025-11-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/12/01/2025-11-29-%20/" title="博客搭建">博客搭建</a><time datetime="2024-12-01T07:30:00.000Z" title="发表于 2024-12-01 15:30:00">2024-12-01</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By Cyan</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.2</a></span></div><div class="footer-content"></div><span>文字森林 | 记录思考与感悟</span></div><div class="custom-text">Cyan © 2025</div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.2"></script><script src="/js/main.js?v=5.5.2"></script><div class="js-pjax"></div><script async data-pjax src="/"></script></div></body></html>
