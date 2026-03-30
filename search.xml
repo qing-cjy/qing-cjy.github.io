@@ -70,6 +70,28 @@
     
     
     <entry>
+      <title>link</title>
+      <link href="/link/index.html"/>
+      <url>/link/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
+      <link href="/css/custom.css"/>
+      <url>/css/custom.css</url>
+      
+        <content type="html"><![CDATA[/* 文章卡片封面美化 */.card-cover {  border-radius: 8px 8px 0 0;  overflow: hidden;  height: 180px; /* 封面高度，可调整 */  object-fit: cover;}/* 卡片标题美化 */.card-title {  font-size: 18px;  font-weight: 600;  margin: 10px 0;  color: #333;}/* 卡片描述美化 */.card-excerpt {  color: #666;  font-size: 14px;  line-height: 1.6;  overflow: hidden;  text-overflow: ellipsis;  display: -webkit-box;  -webkit-line-clamp: 2; /* 只显示2行描述 */  -webkit-box-orient: vertical;}/* 鼠标 hover 卡片时的动画 */.card:hover {  transform: translateY(-5px);  box-shadow: 0 10px 20px rgba(0,0,0,0.1);  transition: all 0.3s ease;}]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>欢迎光临我的博客</title>
       <link href="/index.html"/>
       <url>/index.html</url>
@@ -81,9 +103,9 @@
     
     
     <entry>
-      <title>link</title>
-      <link href="/link/index.html"/>
-      <url>/link/index.html</url>
+      <title>about</title>
+      <link href="/about/index.html"/>
+      <url>/about/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -103,20 +125,9 @@
     
     
     <entry>
-      <title></title>
-      <link href="/css/custom.css"/>
-      <url>/css/custom.css</url>
-      
-        <content type="html"><![CDATA[/* 文章卡片封面美化 */.card-cover {  border-radius: 8px 8px 0 0;  overflow: hidden;  height: 180px; /* 封面高度，可调整 */  object-fit: cover;}/* 卡片标题美化 */.card-title {  font-size: 18px;  font-weight: 600;  margin: 10px 0;  color: #333;}/* 卡片描述美化 */.card-excerpt {  color: #666;  font-size: 14px;  line-height: 1.6;  overflow: hidden;  text-overflow: ellipsis;  display: -webkit-box;  -webkit-line-clamp: 2; /* 只显示2行描述 */  -webkit-box-orient: vertical;}/* 鼠标 hover 卡片时的动画 */.card:hover {  transform: translateY(-5px);  box-shadow: 0 10px 20px rgba(0,0,0,0.1);  transition: all 0.3s ease;}]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>about</title>
-      <link href="/about/index.html"/>
-      <url>/about/index.html</url>
+      <title>tags</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -128,17 +139,6 @@
       <title>movies</title>
       <link href="/movies/index.html"/>
       <url>/movies/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>tags</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
